@@ -1,0 +1,28 @@
+Our group chose to use the mutex locks and condition functions to tackle problem 1. 
+We initialize a thread for each shoe, then run all of the commands for each within an infinite loop inside of the shoe thread method.
+
+We record the number of each shoes type in an array called amounts[3], which is used for multiple comparisons 
+An array count[3] records the amount of each shoe type to enter and leave the stage, 
+allowing us to know how many of each shoe have been on stage. 
+
+We used this to help ensure fairness preventing, say runners for instance, 
+from getting on stage after 18 runners have been on stage(count[i] >= amounts[i]) and allowing the stage to empty out
+
+At the beginning of shoe_thread, the shoes checks if 
+    1. the stage belongs to another faction(not == i or -1)
+    2. their own faction has reached its limit (full[i]==1)
+If either condition is true, the thread sleeps with the stage lock condition, meaning it is not ready to try and get on stage
+
+If the thread makes it past this condition, the shoe moves on to the need friends check. 
+All of this code only runs when the stage is open, meaning no shoes of any type hold the stage, thus the shoes should enter the stage in pairs or more.
+
+The thread increments a variable ready[i] that represents the number of specific shoe types that made it past the first wait.
+If shoes ready is < 2, then the shoe sleeps on the condition need_friends
+If shoes ready is >= 2, it signals need_friends to wake other waiting shoes to go on stage
+
+The shoes will spend their random time on stage then leave. 
+While one type owns the stage, any shoes of that type can join as long as their respective full variable is not true
+
+Once all shoe types reach full[i] == 1, a free for all is declared, all shoes are awoken and full is reset, restarting the loop.
+
+Any time a shoe enters or leaves the stage, it is in a lock.
